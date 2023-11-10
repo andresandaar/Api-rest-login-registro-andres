@@ -6,8 +6,8 @@ import { ValidatorOptions, validate } from "class-validator"
 
 export class UserController {
 
-   private static  userRepository = AppDataSource.getRepository(User);
-        
+    private static userRepository = AppDataSource.getRepository(User);
+
     static getAll = async (req: Request, res: Response) => {
         try {
             const users: User[] = await this.userRepository.find();
@@ -26,7 +26,7 @@ export class UserController {
         const id = parseInt(req.params.id)
         try {
             const user = await this.userRepository.findOneOrFail({ where: { id } })
-           // const user = await this.userRepository.findOneBy({ id })
+            // const user = await this.userRepository.findOneBy({ id })
             res.send(user)
         } catch (error) {
             return res.status(404).json({ message: 'No result' });
@@ -40,13 +40,13 @@ export class UserController {
             username, password, role
         });
         // validate
-        const validatetionOpt:ValidatorOptions= {validationError: {target:false, value:false}};
-        const errors = await validate(user,validatetionOpt);
+        const validatetionOpt: ValidatorOptions = { validationError: { target: false, value: false } };
+        const errors = await validate(user, validatetionOpt);
         if (errors.length > 0) { return res.status(400).json(errors) };
         try {
             user.hashPassword();
             await this.userRepository.save(user);
-            let newUser = await this.userRepository.findOneOrFail({where:{username}});
+            let newUser = await this.userRepository.findOneOrFail({ where: { username } });
             //all ok
             res.send('User  created')
             //res.send(newUser)
@@ -67,8 +67,8 @@ export class UserController {
             return res.status(404).json({ message: 'User not found' });
         }
         // validate
-        const validatetionOpt:ValidatorOptions= {validationError: {target:false, value:false}};
-        const errors = await validate(user,validatetionOpt);
+        const validatetionOpt: ValidatorOptions = { validationError: { target: false, value: false } };
+        const errors = await validate(user, validatetionOpt);
 
         if (errors.length > 0) { return res.status(400).json(errors) };
 
@@ -76,17 +76,17 @@ export class UserController {
         try {
             await this.userRepository.save(user);
         } catch (error) {
-         return res.status(409).json({ message: 'Username alredy in use' });
+            return res.status(409).json({ message: 'Username alredy in use' });
         }
-         res.status(201).json({ message: 'User update' });
+        res.status(201).json({ message: 'User update' });
     }
 
-    static delateUser = async (req: Request, res: Response)=> {
+    static delateUser = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
-        let user:User;
+        let user: User;
         //et userToRemove = await this.userRepository.findOneBy({ id })
         try {
-            user =await this.userRepository.findOneOrFail({ where: { id } });
+            user = await this.userRepository.findOneOrFail({ where: { id } });
         } catch (error) {
             return res.status(404).json({ message: 'User not found' });
         }
