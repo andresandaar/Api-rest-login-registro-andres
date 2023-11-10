@@ -1,3 +1,5 @@
+import 'dotenv/config';
 export default{
-    jwtSecret:'andres1998'
+    jwtSecret: process.env.JWT_SECRET,
+   port: process.env.PORT
 }

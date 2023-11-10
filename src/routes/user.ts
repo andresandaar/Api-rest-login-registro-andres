@@ -7,7 +7,7 @@ const router =Router();
 //get all users
 router.get('/',[checkJwt,checkRole(['Admin']) ],UserController.getAll);
 //get one user
-router.get('/:id',UserController.getById);
+router.get('/:id',[checkJwt],UserController.getById);
 // Create a new user
 router.post('/',UserController.newUser);
 // Edit user
