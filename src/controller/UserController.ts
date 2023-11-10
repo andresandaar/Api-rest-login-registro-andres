@@ -5,21 +5,12 @@ import { validate } from "class-validator"
 
 
 export class UserController {
-    /* 
-       static getAll =async (req: Request, res: Response) => {
-        const userRepository = AppDataSource.getRepository(User);
-        const users=await userRepository.find();
-        if(users.length>0){
-            res.send(users)
-        }else{
-            res.status(400).json({ message: 'Not result ' });
-        }
+
+    private static userRepository = AppDataSource.getRepository(User);
     
-        } */
     static getAll = async (req: Request, res: Response) => {
         try {
-            const userRepository = AppDataSource.getRepository(User);
-            const users: User[] = await userRepository.find();
+            const users: User[] = await this.userRepository.find();
             if (users.length > 0) {
                 res.send(users);
             } else {
@@ -33,10 +24,9 @@ export class UserController {
 
     static getById = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
-        const userRepository = AppDataSource.getRepository(User);
+        //const userRepository = AppDataSource.getRepository(User);
         try {
-            const user = await userRepository.findOneOrFail({ where: { id } })
-            // const user = await userRepository.findOne({where: { id }})
+            const user = await this.userRepository.findOneOrFail({ where: { id } })
             res.send(user)
         } catch (error) {
             return res.status(404).json({ message: 'No result' });
@@ -51,10 +41,9 @@ export class UserController {
         });
         // validate
         const errors = await validate(user);
-        if (errors.length > 0) { return res.status(400).json(errors) };
-        const userRepository = AppDataSource.getRepository(User);
+        if (errors.length) return res.status(400).json(errors);
         try {
-            await userRepository.save(user);
+            await this.userRepository.save(user);
         } catch (error) {
             return res.status(409).json({ message: 'Username alredy exist' });
         }
@@ -66,9 +55,9 @@ export class UserController {
         let user;
         const id = parseInt(req.params.id);
         const { username, role } = req.body;
-        const userRepository = AppDataSource.getRepository(User);
+
         try {
-            user = await userRepository.findOneOrFail({ where: { id } });
+            user = await this.userRepository.findOneOrFail({ where: { id } });
             user.username = username;
             user.role = role;
         } catch (error) {
@@ -76,29 +65,27 @@ export class UserController {
         }
         // validate
         const errors = await validate(user);
-        if (errors.length > 0) { return res.status(400).json(errors) };
+        if (errors.length) return res.status(400).json(errors);
 
         //try to save user
         try {
-            await userRepository.save(user);
+            await this.userRepository.save(user);
         } catch (error) {
-         return res.status(409).json({ message: 'Username alredy in use' });
+            return res.status(409).json({ message: 'Username alredy in use' });
         }
-         res.status(201).json({ message: 'User update' });
+        res.status(201).json({ message: 'User update' });
     }
 
-    static delateUser = async (req: Request, res: Response)=> {
-        const id = parseInt(req.params.id)
-        const userRepository = AppDataSource.getRepository(User);
-        let user:User;
-        //et userToRemove = await this.userRepository.findOneBy({ id })
+    static delateUser = async (req: Request, res: Response) => {
+        const id = parseInt(req.params.id);
+        let user: User;
         try {
-            user =await userRepository.findOneOrFail({ where: { id } });
+            user = await this.userRepository.findOneOrFail({ where: { id } });
         } catch (error) {
             return res.status(404).json({ message: 'User not found' });
         }
         //Remove user
-        userRepository.delete(id);
+        this.userRepository.delete(id);
         res.status(201).json({ message: 'User delete' });
     }
 

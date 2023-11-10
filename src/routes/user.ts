@@ -10,6 +10,6 @@ router.post('/',UserController.newUser);
 // Edit user
 router.patch('/:id',UserController.editUser);
 // Delete user
-router.patch('/:id',UserController.delateUser);
+router.delete('/:id',UserController.delateUser);
 
 export default router;
