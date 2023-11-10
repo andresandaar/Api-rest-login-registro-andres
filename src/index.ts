@@ -5,9 +5,7 @@ import helmet from "helmet";
 import routes from "./routes/index";
 import config from "./config/config";
 
-const PORT= config.port ||  3000
-
-
+const PORT= Number(config.port); 
 
 AppDataSource.initialize().then(async () => {
     // create express app
