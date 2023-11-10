@@ -6,8 +6,8 @@ import { validate } from "class-validator"
 
 export class UserController {
 
-    private static userRepository = AppDataSource.getRepository(User);
-    
+   private static  userRepository = AppDataSource.getRepository(User);
+        
     static getAll = async (req: Request, res: Response) => {
         try {
             const users: User[] = await this.userRepository.find();
@@ -24,9 +24,9 @@ export class UserController {
 
     static getById = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
-        //const userRepository = AppDataSource.getRepository(User);
         try {
             const user = await this.userRepository.findOneOrFail({ where: { id } })
+           // const user = await this.userRepository.findOneBy({ id })
             res.send(user)
         } catch (error) {
             return res.status(404).json({ message: 'No result' });
@@ -41,7 +41,7 @@ export class UserController {
         });
         // validate
         const errors = await validate(user);
-        if (errors.length) return res.status(400).json(errors);
+        if (errors.length > 0) { return res.status(400).json(errors) };
         try {
             await this.userRepository.save(user);
         } catch (error) {
@@ -55,7 +55,6 @@ export class UserController {
         let user;
         const id = parseInt(req.params.id);
         const { username, role } = req.body;
-
         try {
             user = await this.userRepository.findOneOrFail({ where: { id } });
             user.username = username;
@@ -65,22 +64,23 @@ export class UserController {
         }
         // validate
         const errors = await validate(user);
-        if (errors.length) return res.status(400).json(errors);
+        if (errors.length > 0) { return res.status(400).json(errors) };
 
         //try to save user
         try {
             await this.userRepository.save(user);
         } catch (error) {
-            return res.status(409).json({ message: 'Username alredy in use' });
+         return res.status(409).json({ message: 'Username alredy in use' });
         }
-        res.status(201).json({ message: 'User update' });
+         res.status(201).json({ message: 'User update' });
     }
 
-    static delateUser = async (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        let user: User;
+    static delateUser = async (req: Request, res: Response)=> {
+        const id = parseInt(req.params.id)
+        let user:User;
+        //et userToRemove = await this.userRepository.findOneBy({ id })
         try {
-            user = await this.userRepository.findOneOrFail({ where: { id } });
+            user =await this.userRepository.findOneOrFail({ where: { id } });
         } catch (error) {
             return res.status(404).json({ message: 'User not found' });
         }
