@@ -1,7 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { Request, Response } from "express"
 import { User } from "../entity/User"
-import { validate } from "class-validator"
+import { ValidatorOptions, validate } from "class-validator"
 
 
 export class UserController {
@@ -40,15 +40,19 @@ export class UserController {
             username, password, role
         });
         // validate
-        const errors = await validate(user);
+        const validatetionOpt:ValidatorOptions= {validationError: {target:false, value:false}};
+        const errors = await validate(user,validatetionOpt);
         if (errors.length > 0) { return res.status(400).json(errors) };
         try {
+            user.hashPassword();
             await this.userRepository.save(user);
+            let newUser = await this.userRepository.findOneOrFail({where:{username}});
+            //all ok
+            res.send('User  created')
+            //res.send(newUser)
         } catch (error) {
             return res.status(409).json({ message: 'Username alredy exist' });
         }
-        //all ok
-        res.send('User  created')
     }
 
     static editUser = async (req: Request, res: Response) => {
@@ -63,7 +67,9 @@ export class UserController {
             return res.status(404).json({ message: 'User not found' });
         }
         // validate
-        const errors = await validate(user);
+        const validatetionOpt:ValidatorOptions= {validationError: {target:false, value:false}};
+        const errors = await validate(user,validatetionOpt);
+
         if (errors.length > 0) { return res.status(400).json(errors) };
 
         //try to save user

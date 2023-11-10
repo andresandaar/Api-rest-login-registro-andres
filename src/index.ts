@@ -1,9 +1,9 @@
 import * as express from "express"
-import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import * as cors from 'cors';
 import helmet from "helmet";
 import routes from "./routes/index";
+import 'dotenv/config';
 const PORT= process.env.PORT ||  3000
 
 

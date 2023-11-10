@@ -17,6 +17,7 @@
       "bcryptjs": "^2.4.3",
       "class-validator": "^0.14.0",
       "cors": "^2.8.5",
+      "dotenv": "^16.3.1",
       "express": "^4.17.2",
       "helmet": "^7.1.0",
       "jsonwebtoken": "^9.0.2",
@@ -27,6 +28,7 @@
    "scripts": {
       "typeorm": "typeorm-ts-node-commonjs",
       "tsc": "tsc",
-      "dev": "set debug=* && ts-node-dev --respawn --transpile-only ./src/index.ts"
+      "dev": "set debug=* && ts-node-dev --respawn --transpile-only ./src/index.ts",
+      "start": "node ./dist/index.js"
    }
 }
